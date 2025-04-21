@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/authentication";
 
 import usePosts from "../hooks/usePosts";
 import getPublishedDate from "../utils/getPublishedDate";
@@ -9,8 +10,8 @@ function HomePage() {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState("");
   const [keywords, setKeywords] = useState("");
-  const { posts, totalPages, getPosts, deletePost, isError, isLoading } =
-    usePosts();
+  const { posts, totalPages, getPosts, deletePost, isError, isLoading } = usePosts();
+  const { logout } = useAuth();
 
   useEffect(() => {
     getPosts({ status, keywords, page });
@@ -27,11 +28,14 @@ function HomePage() {
         >
           Create Post
         </button>
-        {/* 
-           // 🐨 Todo: Exercise #7
-          //  นำ Function `logout` จาก AuthContext มา Execute ใน Prop `onClick`
-        */}
-        <button>Logout</button>
+        <button
+          onClick={() => {
+            logout();
+            navigate("/login"); // นำทางไปยังหน้า login หลังจาก logout
+          }}
+        >
+          Logout
+        </button>
       </div>
       <div className="search-box-container">
         <div className="search-box">
@@ -50,12 +54,7 @@ function HomePage() {
         <div className="status-filter">
           <label>
             View Status
-            <select
-              id="status"
-              name="status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            >
+            <select id="status" name="status" value={status} onChange={(e) => setStatus(e.target.value)}>
               <option disabled value="">
                 -- Select a status --
               </option>
@@ -79,24 +78,15 @@ function HomePage() {
               <h2>Status: {post.status}</h2>
               <h2>Published Time: {getPublishedDate(post.published_at)}</h2>
               <div className="post-actions">
-                <button
-                  className="view-button"
-                  onClick={() => navigate(`/post/view/${post._id}`)}
-                >
+                <button className="view-button" onClick={() => navigate(`/post/view/${post._id}`)}>
                   View post
                 </button>
-                <button
-                  className="edit-button"
-                  onClick={() => navigate(`/post/edit/${post._id}`)}
-                >
+                <button className="edit-button" onClick={() => navigate(`/post/edit/${post._id}`)}>
                   Edit post
                 </button>
               </div>
 
-              <button
-                className="delete-button"
-                onClick={() => deletePost(post._id)}
-              >
+              <button className="delete-button" onClick={() => deletePost(post._id)}>
                 x
               </button>
             </div>

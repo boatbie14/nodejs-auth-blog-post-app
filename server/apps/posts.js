@@ -1,11 +1,11 @@
 import { ObjectId } from "mongodb";
 import { Router } from "express";
 import { db } from "../utils/db.js";
+import protect from "../middlewares/protect.js";
 
 const postRouter = Router();
 
-// 🐨 Todo: Exercise #5
-// นำ Middleware `protect` มาใช้กับ `postRouter` ด้วย Function `app.use`
+postRouter.use(protect);
 
 postRouter.get("/", async (req, res) => {
   const status = req.query.status;
@@ -24,12 +24,7 @@ postRouter.get("/", async (req, res) => {
   }
 
   const collection = db.collection("posts");
-  const posts = await collection
-    .find(query)
-    .sort({ published_at: -1 })
-    .skip(skip)
-    .limit(5)
-    .toArray();
+  const posts = await collection.find(query).sort({ published_at: -1 }).skip(skip).limit(5).toArray();
 
   const count = await collection.countDocuments(query);
   const totalPages = Math.ceil(count / PAGE_SIZE);

@@ -1,13 +1,22 @@
 import { useState } from "react";
+import { useAuth } from "../contexts/authentication";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // 🐨 Todo: Exercise #4
-    //  นำ Function `login` ใน AuthContext มา Execute ใน Event Handler ตรงนี้
+    try {
+      await login(username, password);
+      navigate("/");
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert("Login failed: " + error.message);
+    }
   };
 
   return (
@@ -48,6 +57,7 @@ function LoginPage() {
         <div className="form-actions">
           <button type="submit">Login</button>
         </div>
+        <a href="/register">Sign Up</a>
       </form>
     </div>
   );

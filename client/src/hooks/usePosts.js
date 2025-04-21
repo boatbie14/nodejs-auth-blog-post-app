@@ -19,9 +19,7 @@ const usePosts = () => {
       params.append("page", page);
       setIsError(false);
       setIsLoading(true);
-      const results = await axios.get(
-        `http://localhost:4000/posts?${params.toString()}`
-      );
+      const results = await axios.get(`http://localhost:4000/posts?${params.toString()}`);
       setPosts(results.data.data);
       setTotalPages(results.data.total_pages);
       setIsLoading(false);
